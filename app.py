@@ -74,7 +74,7 @@ def load_model_and_preprocessor():
 # --- 3. CONFIGURACIÓN DE LA PÁGINA ---
 st.set_page_config(
     page_title="Predicción de Demanda de Transporte",
-    page_icon="�",
+    page_icon="🚌",
     layout="wide"
 )
 st.title("🚌 Sistema de Predicción de Demanda de Transporte")
@@ -87,7 +87,7 @@ model, preprocessor = load_model_and_preprocessor()
 if model is None or preprocessor is None:
     st.stop()
 else:
-    st.success("✅ Modelo cargados exitosamente.")
+    st.success("✅ Modelo y preprocesador cargados exitosamente.")
 
 # --- 5. FORMULARIO DE ENTRADA ---
 with st.form("formulario_prediccion_demanda"):
