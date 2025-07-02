@@ -11,8 +11,7 @@ Original file is located at
 """
 Aplicación Streamlit para la Predicción de Demanda de Transporte.
 
-Esta aplicación carga un modelo de red neuronal entrenado con PyTorch y un
-preprocesador de Scikit-learn para predecir el número de asientos vendidos
+Esta aplicación carga un modelo de red neuronal entrenado con PyTorch para predecir el número de asientos vendidos
 en un viaje.
 """
 
@@ -111,9 +110,23 @@ st.set_page_config(
     page_icon="🚌",
     layout="wide"
 )
-st.title("🚌 Sistema de Predicción de Demanda de Transporte")
-st.markdown("Ingrese los detalles del viaje para estimar el número de asientos que se venderán.")
+st.title("🚌 Predicción Inteligente de Demanda de Transporte")
+st.markdown("""
+¡Bienvenido a la herramienta definitiva para optimizar tus rutas de transporte!
+Esta aplicación innovadora utiliza un **modelo avanzado de Red Neuronal (PyTorch)**
+para predecir con alta precisión el número de asientos que se venderán en cada viaje.
+Anticipa la demanda, maximiza la ocupación y mejora la eficiencia de tus operaciones.
+""")
+
+# Botones de información
 st.markdown("---")
+col_info1, col_info2 = st.columns(2)
+with col_info1:
+    st.link_button("🎥 ¿Cómo usar?", url="https://www.youtube.com/watch?v=tu_video_de_ejemplo", help="Haz clic para ver un video tutorial") # Reemplaza con tu link de video
+with col_info2:
+    st.link_button("📄 Reporte Técnico", url="https://tu_blog_o_documento_tecnico.com", help="Haz clic para leer el informe técnico detallado") # Reemplaza con tu link de blog
+st.markdown("---")
+
 
 # --- 4. CARGAR MODELO Y PREPROCESADOR ---
 model, preprocessor = load_model_and_preprocessor()
