@@ -199,4 +199,3 @@ if enviado:
         except Exception as e:
             st.error(f"Ocurrió un error durante la predicción: {e}")
             st.error("Asegúrate de que el archivo '.pkl' no esté corrupto y que las entradas sean válidas.")
-�
