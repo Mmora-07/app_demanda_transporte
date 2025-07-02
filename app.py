@@ -178,6 +178,11 @@ if enviado:
         mes = fecha_viaje.month
         hora = hora_viaje.hour
 
+        # --- DEBUGGING: Imprimir valores de hora ---
+        st.write(f"DEBUG: Hora de viaje seleccionada por el usuario (objeto datetime.time): {hora_viaje}")
+        st.write(f"DEBUG: Hora extraída para la predicción (entero): {hora}")
+        # --- FIN DEBUGGING ---
+
         # Crear un DataFrame con una sola fila para la predicción
         # El orden de las columnas DEBE ser el mismo que en el entrenamiento
         columnas_features = [
