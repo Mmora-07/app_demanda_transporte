@@ -21,7 +21,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import pandas as pd
-import pickle
+import joblib # Importar joblib para cargar el preprocesador
 from pathlib import Path
 from datetime import datetime
 
@@ -48,28 +48,62 @@ class DemandPredictionNet(nn.Module):
 @st.cache_resource
 def load_model_and_preprocessor():
     """
-    Carga el modelo de PyTorch y el preprocesador desde el archivo .pkl.
+    Carga el modelo de PyTorch (estado) y el preprocesador (joblib).
     """
-    model_path = Path(__file__).parent / "demand_prediction_redN.pkl"
+    # Rutas a los archivos del modelo y preprocesador
+    model_state_path = Path(__file__).parent / "modelo_pytorch123.pth"
+    preprocessor_path = Path(__file__).parent / "preprocesador123.pkl"
 
-    if not model_path.exists():
-        st.error(f"Error: No se encontró el archivo del modelo en la ruta: {model_path}")
-        st.error("Asegúrate de que 'demand_prediction_redN.pkl' esté en el mismo directorio que este script.")
+    if not model_state_path.exists():
+        st.error(f"Error: No se encontró el archivo del estado del modelo en la ruta: {model_state_path}")
+        st.error("Asegúrate de que 'modelo_pytorch123.pth' esté en el mismo directorio que este script.")
         return None, None
 
-    with open(model_path, 'rb') as f:
-        deployment_package = pickle.load(f)
+    if not preprocessor_path.exists():
+        st.error(f"Error: No se encontró el archivo del preprocesador en la ruta: {preprocessor_path}")
+        st.error("Asegúrate de que 'preprocesador123.pkl' esté en el mismo directorio que este script.")
+        return None, None
 
-    # Reconstruir el modelo
-    input_features = deployment_package['input_features']
-    model = DemandPredictionNet(n_input_features=input_features)
-    model.load_state_dict(deployment_package['model_state_dict'])
-    model.eval() # Poner el modelo en modo de evaluación
+    try:
+        # Cargar el preprocesador con joblib
+        preprocessor = joblib.load(preprocessor_path)
 
-    # Extraer el preprocesador
-    preprocessor = deployment_package['preprocessor']
+        # Determinar el número de características de entrada a partir del preprocesador
+        # Esto asume que el preprocesador tiene un atributo 'n_features_in_' o similar
+        # o que puedes deducirlo de los datos de entrenamiento usados para crearlo.
+        # En tu script de entrenamiento, 'input_features' se definió como X_train_processed.shape[1]
+        # Para obtenerlo de un preprocesador ya entrenado, puedes necesitar un pequeño truco
+        # o guardar este valor junto con el preprocesador.
+        # Una forma es pasar un dummy input a través del preprocesador para ver la forma de salida.
+        # Sin embargo, la forma más robusta es guardar 'input_features' junto con el preprocesador.
+        # Si no lo guardaste, puedes intentar inferirlo de la transformación de un dataframe vacío
+        # o simplemente usar un valor fijo si sabes que no cambiará.
+        # Para este ejemplo, asumiremos que el preprocesador puede inferir las características
+        # o que 'input_features' se conoce. Si no, necesitarías guardar este valor en el .pkl
+        # o en un archivo separado.
 
-    return model, preprocessor
+        # Una forma de obtener n_input_features si no se guardó explícitamente:
+        # Crea un DataFrame dummy con las columnas esperadas por el preprocesador
+        # y luego transforma para obtener la forma.
+        dummy_data = pd.DataFrame([[0, 0, 0, 0, 'Lugar_A', 'Lugar_B', 'bus', 'efectivo']],
+                                  columns=['cupo_max', 'dia_semana', 'mes', 'hora',
+                                           'origen', 'destino', 'tipo_carro', 'metodo_pago'])
+        input_features = preprocessor.transform(dummy_data).shape[1]
+
+
+        # Instanciar el modelo con el número correcto de características de entrada
+        model = DemandPredictionNet(n_input_features=input_features)
+
+        # Cargar el estado del modelo PyTorch
+        model.load_state_dict(torch.load(model_state_path, map_location=torch.device('cpu')))
+        model.eval() # Poner el modelo en modo de evaluación
+
+        return model, preprocessor
+
+    except Exception as e:
+        st.error(f"Ocurrió un error al cargar el modelo o el preprocesador: {e}")
+        st.error("Asegúrate de que los archivos .pth y .pkl no estén corruptos y que las versiones de las librerías sean compatibles.")
+        return None, None
 
 # --- 3. CONFIGURACIÓN DE LA PÁGINA ---
 st.set_page_config(
