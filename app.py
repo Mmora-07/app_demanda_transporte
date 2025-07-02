@@ -67,17 +67,7 @@ def load_model_and_preprocessor():
         # Cargar el preprocesador con joblib
         preprocessor = joblib.load(preprocessor_path)
 
-        # Determinar el número de características de entrada a partir del preprocesador
-        # Esto asume que el preprocesador tiene un atributo 'n_features_in_' o similar
-        # o que puedes deducirlo de los datos de entrenamiento usados para crearlo.
-        # En tu script de entrenamiento, 'input_features' se definió como X_train_processed.shape[1]
-        # Para obtenerlo de un preprocesador ya entrenado, puedes necesitar un pequeño truco
-        # o guardar este valor junto con el preprocesador.
-        # Una forma es pasar un dummy input a través del preprocesador para ver la forma de salida.
-        # Sin embargo, la forma más robusta es guardar 'input_features' junto con el preprocesador.
-        # Si no lo guardaste, puedes intentar inferir el número de características
-        # creando un DataFrame dummy con las columnas esperadas por el preprocesador
-        # y luego transformando para obtener la forma de salida.
+
         dummy_data = pd.DataFrame([[0, 0, 0, 0, 'Lugar_A', 'Lugar_B', 'bus', 'efectivo']],
                                   columns=['cupo_max', 'dia_semana', 'mes', 'hora',
                                            'origen', 'destino', 'tipo_carro', 'metodo_pago'])
@@ -118,7 +108,7 @@ col_info1, col_info2 = st.columns(2)
 with col_info1:
     st.link_button("🎥 ¿Cómo usar?", url="https://www.youtube.com/watch?v=tu_video_de_ejemplo", help="Haz clic para ver un video tutorial") # Reemplaza con tu link de video
 with col_info2:
-    st.link_button("📄 Reporte Técnico", url="https://tu_blog_o_documento_tecnico.com", help="Haz clic para leer el informe técnico detallado") # Reemplaza con tu link de blog
+    st.link_button("📄 Reporte Técnico", url="https://medium.com/@dcastrot/aplicaciones-en-sistemas-de-recomendación-e-imágenes-c79df14e1d83", help="Haz clic para leer el informe técnico detallado") # Reemplaza con tu link de blog
 st.markdown("---")
 
 
@@ -191,10 +181,7 @@ if enviado:
         # La hora ahora se toma directamente de la variable hora_viaje que ya está enlazada a session_state
         hora = hora_viaje.hour
 
-        # --- DEBUGGING: Imprimir valores de hora ---
-        # st.write(f"DEBUG: Hora de viaje seleccionada por el usuario (objeto datetime.time): {hora_viaje}")
-        # st.write(f"DEBUG: Hora extraída para la predicción (entero): {hora}")
-        # --- FIN DEBUGGING ---
+
 
         # Crear un DataFrame con una sola fila para la predicción
         # El orden de las columnas DEBE ser el mismo que en el entrenamiento
