@@ -22,7 +22,7 @@ import numpy as np
 import pandas as pd
 import joblib # Importar joblib para cargar el preprocesador
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, time # Importar time específicamente
 
 # --- 1. DEFINICIÓN DE LA ARQUITECTURA DEL MODELO ---
 # Esta arquitectura DEBE ser idéntica a la que usaste para entrenar el modelo.
@@ -75,15 +75,9 @@ def load_model_and_preprocessor():
         # o guardar este valor junto con el preprocesador.
         # Una forma es pasar un dummy input a través del preprocesador para ver la forma de salida.
         # Sin embargo, la forma más robusta es guardar 'input_features' junto con el preprocesador.
-        # Si no lo guardaste, puedes intentar inferirlo de la transformación de un dataframe vacío
-        # o simplemente usar un valor fijo si sabes que no cambiará.
-        # Para este ejemplo, asumiremos que el preprocesador puede inferir las características
-        # o que 'input_features' se conoce. Si no, necesitarías guardar este valor en el .pkl
-        # o en un archivo separado.
-
-        # Una forma de obtener n_input_features si no se guardó explícitamente:
-        # Crea un DataFrame dummy con las columnas esperadas por el preprocesador
-        # y luego transforma para obtener la forma.
+        # Si no lo guardaste, puedes intentar inferir el número de características
+        # creando un DataFrame dummy con las columnas esperadas por el preprocesador
+        # y luego transformando para obtener la forma de salida.
         dummy_data = pd.DataFrame([[0, 0, 0, 0, 'Lugar_A', 'Lugar_B', 'bus', 'efectivo']],
                                   columns=['cupo_max', 'dia_semana', 'mes', 'hora',
                                            'origen', 'destino', 'tipo_carro', 'metodo_pago'])
@@ -155,7 +149,25 @@ with st.form("formulario_prediccion_demanda"):
     with col2:
         st.write("#### 📅 Fecha y Hora")
         fecha_viaje = st.date_input("Fecha del viaje", value=datetime.now())
-        hora_viaje = st.time_input("Hora del viaje", value=datetime.now().time())
+
+        # Inicializar st.session_state.hora_viaje si no existe
+        if 'selected_time' not in st.session_state:
+            st.session_state.selected_time = datetime.now().time()
+
+        # Usar st.session_state para el valor del time_input
+        # El callback on_change actualizará st.session_state.selected_time
+        hora_viaje = st.time_input(
+            "Hora del viaje",
+            value=st.session_state.selected_time,
+            key="time_input_widget" # Añadir una clave única para el widget
+        )
+        # Actualizar la sesión de estado si el usuario cambia la hora
+        # Esto es redundante si 'value' ya está enlazado a session_state,
+        # pero es una buena práctica para asegurar que el estado se actualice
+        # si el widget permite cambios que no activan un rerun inmediato.
+        # En este caso, st.time_input ya es reactivo.
+        st.session_state.selected_time = hora_viaje
+
 
     with col3:
         st.write("#### ⚙️ Detalles del Vehículo y Pago")
@@ -176,11 +188,12 @@ if enviado:
         # Ingeniería de características a partir de las entradas del usuario
         dia_semana = fecha_viaje.weekday()  # Lunes=0, Domingo=6
         mes = fecha_viaje.month
+        # La hora ahora se toma directamente de la variable hora_viaje que ya está enlazada a session_state
         hora = hora_viaje.hour
 
         # --- DEBUGGING: Imprimir valores de hora ---
-        st.write(f"DEBUG: Hora de viaje seleccionada por el usuario (objeto datetime.time): {hora_viaje}")
-        st.write(f"DEBUG: Hora extraída para la predicción (entero): {hora}")
+        # st.write(f"DEBUG: Hora de viaje seleccionada por el usuario (objeto datetime.time): {hora_viaje}")
+        # st.write(f"DEBUG: Hora extraída para la predicción (entero): {hora}")
         # --- FIN DEBUGGING ---
 
         # Crear un DataFrame con una sola fila para la predicción
