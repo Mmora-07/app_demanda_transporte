@@ -1,14 +1,6 @@
-<<<<<<< HEAD
 streamlit
 torch
 numpy
 pandas
 joblib
 scikit-learn
-=======
-streamlit
-torch
-numpy
-pandas
-scikit-learn
->>>>>>> a679728db6e52102a8049ec8428dd9c9627bc7e9
