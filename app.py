@@ -125,7 +125,7 @@ with st.form("formulario_prediccion_demanda"):
     st.subheader("📋 Ingrese los Datos del Viaje")
 
     # Opciones basadas en tu script de entrenamiento
-    ciudades = ['Lugar_A', 'Lugar_B', 'Lugar_C', 'Lugar_D', 'Lugar_E']
+    ciudades = ['Medellin', 'Lugar_B', 'Lugar_C', 'Lugar_D', 'Lugar_E']
     car_types = ['bus', 'minibus', 'van']
     metodos_pago = ['efectivo', 'transferencia', 'tarjeta de credito']
 
