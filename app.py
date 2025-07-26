@@ -106,7 +106,7 @@ Anticipa la demanda, maximiza la ocupación y mejora la eficiencia de tus operac
 st.markdown("---")
 col_info1, col_info2 = st.columns(2)
 with col_info1:
-    st.link_button("🎥 ¿Cómo usar?", url="https://www.youtube.com/watch?v=tu_video_de_ejemplo", help="Haz clic para ver un video tutorial") # Reemplaza con tu link de video
+    st.link_button("🎥 ¿Cómo usar?", url="https://youtu.be/sBysPVOv4Cw") # Reemplaza con tu link de video
 with col_info2:
     st.link_button("📄 Reporte Técnico", url="https://medium.com/@dcastrot/aplicaciones-en-sistemas-de-recomendación-e-imágenes-c79df14e1d83", help="Haz clic para leer el informe técnico detallado") # Reemplaza con tu link de blog
 st.markdown("---")
